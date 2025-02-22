@@ -2,7 +2,7 @@ from random import randrange
 
 from fastapi import Body, FastAPI
 from pydantic import BaseModel
-from fastapi import Response, status
+from fastapi import Response, status, HTTPException
 
 
 app = FastAPI()
@@ -14,7 +14,7 @@ class Post(BaseModel):
     content : str
     published : bool = True
 
-@app.get("/posts")
+@app.get("/posts", status_code = status.HTTP_200_OK)
 def sample():
     return empty_list
 
@@ -28,7 +28,7 @@ empty_list = [{'title': 'about a man', 'content': 'Thiru is a good boy', 'publis
 
 #WE called the class called Post adn saved to variable adn asking them to print and return it will validate for us
 @app.post("/using_pydantic")
-def create_post(value: Post):
+def create_post(value: Post): # type: ignore
     # print(value)
     # print(value.content)
     value = value.dict()
