@@ -1,9 +1,11 @@
 from random import randrange
-
+import time
 from fastapi import Body, FastAPI
 from pydantic import BaseModel
 from fastapi import Response, status, HTTPException
-
+import psycopg2
+from psycopg2.extras import DictCursor
+#This is the main file where we are going to write the code for the API
 
 app = FastAPI()
 
@@ -18,12 +20,19 @@ class Post(BaseModel):
 def sample():
     return empty_list
 
+while True:
 
-#it will get the body from the uer input and save that as dictionary
-# @app.post("/create_post")
-# def create_post(info : dict = Body()):
-#     return(info)
+    try : 
+        conn = psycopg2.connect(host = "localhost", database = "postgres", user="postgres", password="Password", cursor_factory=DictCursor)
+        cursur = conn.cursor()
+        print("connnection established")
+        break
+    except Exception as e:
+        print(e)
+        time.sleep(5)
 
+
+    
 
 
 #WE called the class called Post adn saved to variable adn asking them to print and return it will validate for us
