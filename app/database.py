@@ -1,7 +1,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy import create_engine, Column, Integer, String, Boolean
+
 
 SQLALCHEMY_DATABASE_URL = "postgresql://postgres:Password@localhost/postgres"
 
