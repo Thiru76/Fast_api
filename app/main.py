@@ -12,8 +12,12 @@ from app import models
 from .database import engine, get_db
 from . import pydantic
 from sqlalchemy.orm import Session
+from typing import List
+from passlib.context import CryptContext
 
 
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 #This is the main file where we are going to write the code for the API
 
 models.Base.metadata.create_all(bind=engine)
@@ -26,7 +30,7 @@ empty_list = [{'title': 'about a man', 'content': 'Thiru is a good boy', 'publis
 
 
 
-@app.get("/posts", status_code = status.HTTP_200_OK)
+@app.get("/posts", response_model=  List[pydantic.response])
 def sample(db: Session = Depends(get_db)):
     # posts = cursur.execute("Select * from fast_api") #this is the query to get all the data from the table using sql query
     # posts = cursur.fetchall()
@@ -87,7 +91,7 @@ def finding_index(id):
 
 
 
-@app.get("/get_specific_post/{id}")
+@app.get("/get_specific_post/{id}", response_model=  pydantic.response)
 def get_specific_post(id : int, response : Response, db: Session = Depends(get_db)):
     print(id)
     # retreived_post = find_post(id)
@@ -116,9 +120,9 @@ def delete_post(id : int, db: Session = Depends(get_db)):
     db.commit()
     
     # empty_list.pop(index)
-    return deleted_post
+    return {"message": f"this {id} is deleted"}
 
-@app.put("/update_post/{id}")
+@app.put("/update_post/{id}", response_model=  pydantic.response)
 def update_post(id: int, post_update: pydantic.Post, db: Session = Depends(get_db)):
     print("this is the update function")
     index = finding_index(id)
@@ -140,6 +144,19 @@ def update_post(id: int, post_update: pydantic.Post, db: Session = Depends(get_d
     updated_post.update(post_update.model_dump(), synchronize_session=False)
     db.commit()
     
-    return {'msg': updated_post.first()}
+    return  updated_post.first()
 
 
+
+@app.post("/create_user", response_model = pydantic.user_response)
+def create_user(user: pydantic.user_create, db : Session = Depends(get_db)):
+
+    #creating hash password
+    hashed_password = pwd_context.hash(user.password)
+    user.password = hashed_password
+
+    new_user = models.user(**user.dict())
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user

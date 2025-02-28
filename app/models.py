@@ -1,5 +1,5 @@
 import os
-from sqlalchemy import create_engine, Column, Integer, String, Boolean, TIMESTAMP
+from sqlalchemy import create_engine, Column, Integer, String, Boolean, TIMESTAMP, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -24,3 +24,14 @@ class fast_api(Base):
     content = Column(String, nullable=False)
     published = Column(Boolean, server_default='True', nullable=False)
     created_time = Column(TIMESTAMP, server_default='True', nullable=False)
+
+
+
+class user(Base):
+    __tablename__ = "user_table"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    email = Column(String, nullable=False)
+    password = Column(String, nullable=False)
+    # created_time = Column(TIMESTAMP, server_default='True', nullable=False)
+    created_time = Column(TIMESTAMP(timezone=True), server_default=text('now()'), nullable=False)
