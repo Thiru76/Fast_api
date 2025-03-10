@@ -25,9 +25,6 @@ class user_create(BaseModel):
     name : str
     password : str
 
-
-    
-
 class user_response(BaseModel):
     email : EmailStr
     id : int
@@ -36,3 +33,8 @@ class user_response(BaseModel):
 
     class Config:
         orm_mode = True
+
+class user_login(BaseModel):
+    email : EmailStr
+    password : str
+
