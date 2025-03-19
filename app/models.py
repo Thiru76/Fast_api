@@ -35,3 +35,4 @@ class user(Base):
     password = Column(String, nullable=False)
     # created_time = Column(TIMESTAMP, server_default='True', nullable=False)
     created_time = Column(TIMESTAMP(timezone=True), server_default=text('now()'), nullable=False)
+
