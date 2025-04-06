@@ -14,6 +14,7 @@ from .. import pydantic
 from sqlalchemy.orm import Session
 from typing import List
 from passlib.context import CryptContext
+from .. import oauth2
 
 while True:
 
@@ -34,7 +35,7 @@ router = APIRouter(
 
 #WE called the class called Post adn saved to variable adn asking them to print and return it will validate for us
 @router.post("/create_post", response_model=  pydantic.response)
-def create_post(value: pydantic.Post,db: Session = Depends(get_db)): # type: ignore
+def create_post(value: pydantic.Post,db: Session = Depends(get_db), user_id: int = Depends(oauth2.get_current_user)): # type: ignore
     print(value)
     # print(value.content)
     # value = value.dict()
@@ -47,7 +48,7 @@ def create_post(value: pydantic.Post,db: Session = Depends(get_db)): # type: ign
     # conn.commit()
     # posts = cursur.fetchall()
     # create_new_post = models.fast_api(title= value.title, content = value.content, published = value.published, id = value.id) #this is working fine.
-    
+    print(user_id)
     create_new_post = models.fast_api(**value.dict()) #this will unpach the dictionary and return the values in the form of key value pair and it is using to create the new post.
     db.add(create_new_post) #this is used to add the new data into the database
     db.commit()
@@ -57,12 +58,13 @@ def create_post(value: pydantic.Post,db: Session = Depends(get_db)): # type: ign
 
 
 @router.get("/get_specific_post/{id}", response_model=  pydantic.response)
-def get_specific_post(id : int, response : Response, db: Session = Depends(get_db)):
+def get_specific_post(id : int, response : Response, db: Session = Depends(get_db),user_id: int = Depends(oauth2.get_current_user)):
     print(id)
     # retreived_post = find_post(id)
     # print(type(retreived_post))
     # retreived_post  = cursur.execute(""" SELECT * from fast_api WHERE id = %s  RETURNING * """, (str(id),))    
     # retreived_post = cursur.fetchone()
+    print(user_id)
     retreived_post = db.query(models.fast_api).filter(models.fast_api.id == id).first()
     conn.commit()
     if not retreived_post:
@@ -88,13 +90,14 @@ def delete_post(id : int, db: Session = Depends(get_db)):
     return {"message": f"this {id} is deleted"}
 
 @router.put("/update_post/{id}", response_model=  pydantic.response)
-def update_post(id: int, post_update: pydantic.Post, db: Session = Depends(get_db)):
+def update_post(id: int, post_update: pydantic.Post, db: Session = Depends(get_db), user_id: int = Depends(oauth2.get_current_user)):
     print("this is the update function")
     # index = finding_index(id)
     # print(index)
     # cursur.execute(""" UPDATE fast_api SET title = %s, content = %s, published = %s WHERE id = %s RETURNING * """, (post_update.title, post_update.content, post_update.published, str(id),))
     # conn.commit()
     # updated_post = cursur.fetchone()
+    print(user_id)
     updated_post = db.query(models.fast_api).filter(models.fast_api.id == id)
 
     post = updated_post.first()

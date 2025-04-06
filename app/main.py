@@ -3,7 +3,6 @@ import time
 from fastapi import Body, FastAPI, Depends
 from pydantic import BaseModel
 from fastapi import Response, status, HTTPException
-import psycopg2
 from psycopg2.extras import DictCursor,RealDictCursor
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
