@@ -1,7 +1,7 @@
 import os
 from sqlalchemy import create_engine, Column, Integer, String, Boolean, TIMESTAMP, text, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 
 from app.database import Base
@@ -24,6 +24,7 @@ class fast_api(Base):
     content = Column(String, nullable=False)
     published = Column(Boolean, server_default='True', nullable=False)
     user_id = Column(Integer, ForeignKey("user_table.id", on_delete="CASCADE"),nullable=False)
+    owner = relationship("user")
 
 
 

@@ -12,8 +12,6 @@ from app import models
 from .. database import engine, get_db
 from .. import pydantic
 from sqlalchemy.orm import Session
-from typing import List
-from passlib.context import CryptContext
 from .. import oauth2
 
 while True:
@@ -73,15 +71,22 @@ def get_specific_post(id : int, response : Response, db: Session = Depends(get_d
     return retreived_post
 
 @router.delete("/delete_post/{id}")
-def delete_post(id : int, db: Session = Depends(get_db)):
-    print(id)
+def delete_post(id : int, db: Session = Depends(get_db), Current_user: int = Depends(oauth2.get_current_user)):
+    # print(id)
     # index = finding_index(id)
     deleted_post = db.query(models.fast_api).filter(models.fast_api.id == id)
     # deleted_post = cursur.execute(""" DELETE from fast_api where id = %s  RETURNING * """, (str(id),))
     # deleted_post = cursur.fetchone()
     # conn.commit()
+
+    print(Current_user)
+    # print(Current_user.id)
+    post = deleted_post.first()
     if deleted_post.first() == None:
         return Response(status_code=status.HTTP_404_NOT_FOUND)
+    
+    # if post.user_id != user_id.id:
+    #     return Response(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to perform requested action")
     
     deleted_post.delete(synchronize_session=False)
     db.commit()
@@ -103,6 +108,10 @@ def update_post(id: int, post_update: pydantic.Post, db: Session = Depends(get_d
     post = updated_post.first()
     if post == None:
         return Response(status_code=status.HTTP_404_NOT_FOUND)
+    
+    if post.user_id != oauth2.get_current_user.id:
+        return Response(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to perform requested action")
+    
     # if index == None:
     #     return Response(status_code=status.HTTP_404_NOT_FOUND, detail ="The given {id} is not available")
     

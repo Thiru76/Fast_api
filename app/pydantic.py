@@ -6,16 +6,27 @@ from datetime import datetime
 
 from typing import Optional, List
 
+class user_response(BaseModel):
+    email : EmailStr
+    id : int
+    name : str
+    # created_time : datetime
+
+    class Config:
+        orm_mode = True
+
 class Post(BaseModel): 
     title : str
     content : str
     published : bool = True
     id : int
     user_id : int
+    
 
 class response(Post):
     title : str
     content : str
+    owner : user_response
     # created_time : str
 
     class Config:
@@ -27,15 +38,6 @@ class user_create(BaseModel):
     name : str
     password : str
 
-
-class user_response(BaseModel):
-    email : EmailStr
-    id : int
-    name : str
-    # created_time : datetime
-
-    class Config:
-        orm_mode = True
 
 class user_login(BaseModel):
     email : EmailStr
