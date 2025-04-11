@@ -8,6 +8,7 @@ from . import pydantic
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from .routers import post, user, auth
+from fastapi.middleware.cors import CORSMiddleware
 
 
 
@@ -17,6 +18,13 @@ models.Base.metadata.create_all(bind=engine)
 
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 empty_list = [{'title': 'about a man', 'content': 'Thiru is a good boy', 'published': False, 'id': 79},{'title': 'man_1', 'content': 'Thiru is a good boy', 'published': False, 'id': 77}]
 
