@@ -29,7 +29,7 @@ def sample(db: Session = Depends(get_db), limit:int = 5, search: Optional[str]  
     # posts = cursur.fetchall()
     # sample = db.query(models.fast_api)
     # print(sample)
-    posts = db.query(models.fast_api).filter(models.fast_api.title.contains(search)).limit(limit).all() #this is the query to get all the data from the table using sql alchemy
+    posts = db.query(models.fast_api).filter(models.fast_api.title.contains).limit(limit).all() #this is the query to get all the data from the table using sql alchemy
     print(posts)
     return posts
 
